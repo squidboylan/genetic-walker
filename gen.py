@@ -32,7 +32,7 @@ def create_generation(gen_num, size, genomes_max=200, mutation=0.05, predecessor
         prev_gen = {}
         for i in range(size):
             path = os.path.join("gens", str(predecessor), str(i))
-            results_path = path + "-results"
+            results_path = path + "-result"
 
             with open(path, 'r') as actions_file:
                 actions = yaml.load(actions_file)
@@ -40,9 +40,15 @@ def create_generation(gen_num, size, genomes_max=200, mutation=0.05, predecessor
             with open(results_path, 'r') as results_file:
                 results = yaml.load(results_file)
 
-            prev_gen[str(i)] = {"actions": actions, "results": results['results']}
+            prev_gen[str(i)] = {"actions": actions, "reward": results['reward']}
 
-        print(prev_gen)
+        simple_dict = {}
+        for i in prev_gen.keys():
+            simple_dict[i] = prev_gen[i]['reward']
+
+        for w in sorted(simple_dict, key=simple_dict.get):
+              print(w, simple_dict[w])
+
 
 if __name__ == "__main__":
     #create_generation(0, 100)
