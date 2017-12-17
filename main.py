@@ -1,22 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 import gym
+import sys
+import yaml
+
 env = gym.make('BipedalWalker-v2')
-print(env.action_space)
-print(env.observation_space)
-print(env.action_space.low)
-print(env.action_space.high)
-print(env.observation_space.low)
-print(env.observation_space.high)
-"""
-for i_episode in range(20):
-    observation = env.reset()
-    for t in range(100):
-        env.render()
-        #print(observation)
-        action = env.action_space.sample()
-        print(action)
-        observation, reward, done, info = env.step(action)
-        if done:
-            print("Episode finished after {} timesteps".format(t+1))
-            break
-"""
+file_name = sys.argv[1]
+observation = env.reset()
+
+with open(file_name, 'r') as file_stream:
+    actions = yaml.load(file_stream)
+
+for t in range(2000):
+    env.render()
+    #print(observation)
+    action = actions[t % len(actions)]
+    observation, reward, done, info = env.step(action)

@@ -4,7 +4,7 @@ import yaml
 import os
 
 def create_generation(gen_num, size, genomes_max=200, mutation=0.05, predecessor=None):
-    if not predecessor:
+    if predecessor == None:
         try:
             os.mkdir("gens")
         except FileExistsError as e:
@@ -18,10 +18,32 @@ def create_generation(gen_num, size, genomes_max=200, mutation=0.05, predecessor
             for k in range(genomes):
                 f = []
                 for j in range(4):
-                    f.append(random())
+                    num = random()
+                    sign = randint(0,1)
+                    if sign == 1:
+                        num = num * -1
+
+                    f.append(num)
                 tmp.append(f)
             with open(path, 'w') as yaml_file:
                 yaml.dump(tmp, yaml_file)
 
+    else:
+        prev_gen = {}
+        for i in range(size):
+            path = os.path.join("gens", str(predecessor), str(i))
+            results_path = path + "-results"
+
+            with open(path, 'r') as actions_file:
+                actions = yaml.load(actions_file)
+
+            with open(results_path, 'r') as results_file:
+                results = yaml.load(results_file)
+
+            prev_gen[str(i)] = {"actions": actions, "results": results['results']}
+
+        print(prev_gen)
+
 if __name__ == "__main__":
-    create_generation(0, 100)
+    #create_generation(0, 100)
+    create_generation(1, 100, predecessor=0)
