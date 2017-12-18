@@ -6,10 +6,9 @@ import os
 import sys
 from multiprocessing import Pool
 
-def create_individual(gen_num, ind_num, genomes_max, mutation, parent1=None, parent2=None):
+def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2=None):
     if parent1 == None and parent2 == None:
         path = os.path.join("gens", str(gen_num), str(ind_num))
-        genomes = randint(1, genomes_max)
         tmp = []
         for k in range(genomes):
             f = []
@@ -36,27 +35,6 @@ def create_individual(gen_num, ind_num, genomes_max, mutation, parent1=None, par
 
                 if random() < .05:
                     tmp[k][j] = num
-
-        # Randomly add or remove extra genomes
-        if random() < mutation:
-            if random() < .5:
-                genomes = randint(0, int((len(tmp)-1)/2))
-                for i in range(genomes):
-                    tmp.pop()
-
-            else:
-                genomes = randint(0, genomes_max - len(tmp))
-                for i in range(genomes):
-                    f = []
-                    for j in range(4):
-                        num = random()
-                        sign = randint(0,1)
-                        if sign == 1:
-                            num = num * -1
-
-                        f.append(num)
-                    tmp.append(f)
-
         with open(path, 'w') as yaml_file:
             yaml.dump(tmp, yaml_file)
 
@@ -76,31 +54,10 @@ def create_individual(gen_num, ind_num, genomes_max, mutation, parent1=None, par
 
                 if random() < .05:
                     tmp[k][j] = num
-
-        # Randomly add or remove extra genomes
-        if random() < mutation:
-            if random() < .5:
-                genomes = randint(0, int((len(tmp)-1)/2))
-                for i in range(genomes):
-                    tmp.pop()
-
-            else:
-                genomes = randint(0, genomes_max - len(tmp))
-                for i in range(genomes):
-                    f = []
-                    for j in range(4):
-                        num = random()
-                        sign = randint(0,1)
-                        if sign == 1:
-                            num = num * -1
-
-                        f.append(num)
-                    tmp.append(f)
-
         with open(path, 'w') as yaml_file:
             yaml.dump(tmp, yaml_file)
 
-def create_generation(gen_num, size, workers=2, genomes_max=400, mutation=0.05, predecessor=None):
+def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, predecessor=None):
     if predecessor == None:
         try:
             os.mkdir("gens")
@@ -110,7 +67,7 @@ def create_generation(gen_num, size, workers=2, genomes_max=400, mutation=0.05, 
         os.mkdir(os.path.join("gens", str(gen_num)), mode=0o700)
         args_list = []
         for i in range(size):
-            args_list.append((gen_num, i, genomes_max, mutation))
+            args_list.append((gen_num, i, genomes, mutation))
 
         with Pool(workers) as p:
             p.starmap(create_individual, args_list)
@@ -158,14 +115,14 @@ def create_generation(gen_num, size, workers=2, genomes_max=400, mutation=0.05, 
         to_generate_num = len(to_generate)
         for i in parent_keys:
             parent1 = next_gen[i]['actions']
-            args_list.append((gen_num, i, genomes_max, mutation, parent1))
+            args_list.append((gen_num, i, genomes, mutation, parent1))
 
         for i in range(int(to_generate_num/2)):
             i = i * 2
             parent1 = next_gen[parent_keys.pop(0)]['actions']
             parent2 = next_gen[parent_keys.pop(0)]['actions']
-            args_list.append((gen_num, to_generate.pop(0), genomes_max, mutation, parent1, parent2))
-            args_list.append((gen_num, to_generate.pop(0), genomes_max, mutation, parent2, parent1))
+            args_list.append((gen_num, to_generate.pop(0), genomes, mutation, parent1, parent2))
+            args_list.append((gen_num, to_generate.pop(0), genomes, mutation, parent2, parent1))
 
         with Pool(workers) as p:
             p.starmap(create_individual, args_list)

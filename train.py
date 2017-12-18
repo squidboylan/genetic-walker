@@ -12,9 +12,9 @@ if __name__ == '__main__':
     except:
         workers = 2
 
-    curr_gen = 0
+    curr_gen = 100
     gen_size = 400
-    while curr_gen < 100:
+    while curr_gen < 1000:
         print("Creating generation: " + str(curr_gen))
         if curr_gen == 0:
             create_generation(curr_gen, gen_size, workers=workers)
