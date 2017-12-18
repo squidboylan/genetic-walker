@@ -40,21 +40,22 @@ def create_individual(gen_num, ind_num, genomes_max, mutation, parent1=None, par
         # Randomly add or remove extra genomes
         if random() < mutation:
             if random() < .5:
-                genomes = randint(0, len(tmp)-1)
+                genomes = randint(0, int((len(tmp)-1)/2))
                 for i in range(genomes):
                     tmp.pop()
 
             else:
                 genomes = randint(0, genomes_max - len(tmp))
-                f = []
-                for j in range(4):
-                    num = random()
-                    sign = randint(0,1)
-                    if sign == 1:
-                        num = num * -1
+                for i in range(genomes):
+                    f = []
+                    for j in range(4):
+                        num = random()
+                        sign = randint(0,1)
+                        if sign == 1:
+                            num = num * -1
 
-                    f.append(num)
-                tmp.append(f)
+                        f.append(num)
+                    tmp.append(f)
 
         with open(path, 'w') as yaml_file:
             yaml.dump(tmp, yaml_file)
@@ -79,21 +80,22 @@ def create_individual(gen_num, ind_num, genomes_max, mutation, parent1=None, par
         # Randomly add or remove extra genomes
         if random() < mutation:
             if random() < .5:
-                genomes = randint(0, len(tmp)-1)
+                genomes = randint(0, int((len(tmp)-1)/2))
                 for i in range(genomes):
                     tmp.pop()
 
             else:
                 genomes = randint(0, genomes_max - len(tmp))
-                f = []
-                for j in range(4):
-                    num = random()
-                    sign = randint(0,1)
-                    if sign == 1:
-                        num = num * -1
+                for i in range(genomes):
+                    f = []
+                    for j in range(4):
+                        num = random()
+                        sign = randint(0,1)
+                        if sign == 1:
+                            num = num * -1
 
-                    f.append(num)
-                tmp.append(f)
+                        f.append(num)
+                    tmp.append(f)
 
         with open(path, 'w') as yaml_file:
             yaml.dump(tmp, yaml_file)
