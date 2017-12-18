@@ -15,4 +15,7 @@ for t in range(2000):
     env.render()
     action = actions[t % len(actions)]
     observation, reward, done, info = env.step(action)
+    if float(reward) == -100:
+        break
+
     print(reward)
