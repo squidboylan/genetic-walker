@@ -26,15 +26,6 @@ def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2
     elif parent1 != None and parent2 == None:
         path = os.path.join("gens", str(gen_num), str(ind_num))
         tmp = parent1[:]
-        for k in range(len(tmp)):
-            for j in range(4):
-                num = random()
-                sign = randint(0,1)
-                if sign == 1:
-                    num = num * -1
-
-                if random() < .05:
-                    tmp[k][j] = num
         with open(path, 'w') as yaml_file:
             yaml.dump(tmp, yaml_file)
 
@@ -43,8 +34,13 @@ def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2
         genomes = min(len(parent1), len(parent2))
         split = randint(1, min(len(parent1), len(parent2)))
         tmp = []
-        tmp += parent1[:split]
-        tmp += parent2[split:]
+        for i in range(genomes):
+            f = []
+            for j in range(4):
+                f.append((parent1[i][j] + parent2[i][j])/2)
+
+            tmp.append(f)
+
         for k in range(len(tmp)):
             for j in range(4):
                 num = random()
@@ -54,6 +50,7 @@ def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2
 
                 if random() < .05:
                     tmp[k][j] = num
+
         with open(path, 'w') as yaml_file:
             yaml.dump(tmp, yaml_file)
 
@@ -100,7 +97,7 @@ def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, pred
         to_generate = []
         used_ids_rev = []
         for w in sorted(simple_dict, key=simple_dict.get):
-            #print(w, simple_dict[w])
+            print(w, simple_dict[w])
             if i < size/2:
                 to_generate.append(w)
                 next_gen.pop(w, None)
@@ -109,7 +106,6 @@ def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, pred
                 used_ids_rev.append(w)
 
         parent_keys = used_ids_rev[::-1]
-        #print(parent_keys)
 
         args_list = []
         to_generate_num = len(to_generate)
@@ -119,10 +115,12 @@ def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, pred
 
         for i in range(int(to_generate_num/2)):
             i = i * 2
-            parent1 = next_gen[parent_keys.pop(0)]['actions']
-            parent2 = next_gen[parent_keys.pop(0)]['actions']
+            parent1 = next_gen[choice(parent_keys)]['actions']
+            parent2 = next_gen[choice(parent_keys)]['actions']
             args_list.append((gen_num, to_generate.pop(0), genomes, mutation, parent1, parent2))
-            args_list.append((gen_num, to_generate.pop(0), genomes, mutation, parent2, parent1))
+
+        for i in to_generate:
+            args_list.append((gen_num, i, genomes, mutation))
 
         with Pool(workers) as p:
             p.starmap(create_individual, args_list)

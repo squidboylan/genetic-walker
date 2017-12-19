@@ -16,11 +16,8 @@ def test_creature(file_name):
     for t in range(2000):
         action = actions[t % len(actions)]
         observation, reward, done, info = env.step(action)
-        if float(reward) == -100:
-            break
 
-        else:
-            final_reward = final_reward + float(reward)
+        final_reward = final_reward + float(reward)
 
     final_yaml = {"reward": final_reward}
 
