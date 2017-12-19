@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 from random import *
-import yaml
+import ujson
 import os
 import sys
+import profile
 from multiprocessing import Pool
 
 def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2=None):
@@ -20,14 +21,14 @@ def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2
 
                 f.append(num)
             tmp.append(f)
-        with open(path, 'w') as yaml_file:
-            yaml.dump(tmp, yaml_file)
+        with open(path, 'w') as ujson_file:
+            ujson.dump(tmp, ujson_file)
 
     elif parent1 != None and parent2 == None:
         path = os.path.join("gens", str(gen_num), str(ind_num))
         tmp = parent1[:]
-        with open(path, 'w') as yaml_file:
-            yaml.dump(tmp, yaml_file)
+        with open(path, 'w') as ujson_file:
+            ujson.dump(tmp, ujson_file)
 
     else:
         path = os.path.join("gens", str(gen_num), str(ind_num))
@@ -51,8 +52,8 @@ def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2
                 if random() < .05:
                     tmp[k][j] = num
 
-        with open(path, 'w') as yaml_file:
-            yaml.dump(tmp, yaml_file)
+        with open(path, 'w') as ujson_file:
+            ujson.dump(tmp, ujson_file)
 
 def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, predecessor=None):
     if predecessor == None:
@@ -82,10 +83,10 @@ def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, pred
             results_path = path + "-result"
 
             with open(path, 'r') as actions_file:
-                actions = yaml.load(actions_file)
+                actions = ujson.load(actions_file)
 
             with open(results_path, 'r') as results_file:
-                results = yaml.load(results_file)
+                results = ujson.load(results_file)
 
             next_gen[str(i)] = {"actions": actions, "reward": results['reward']}
 
@@ -134,4 +135,4 @@ if __name__ == "__main__":
     gen_size = 400
 
     #create_generation(0, gen_size, workers=workers)
-    create_generation(1, gen_size, predecessor=0)
+    create_generation(1, gen_size, workers=workers, predecessor=0)
