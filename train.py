@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     curr_gen = 0
     gen_size = 400
-    while curr_gen < 50:
+    while curr_gen < 512:
         print("Creating generation: " + str(curr_gen))
         if curr_gen == 0:
             create_generation(curr_gen, gen_size, workers=workers)

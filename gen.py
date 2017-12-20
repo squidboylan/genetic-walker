@@ -8,17 +8,14 @@ import profile
 from multiprocessing import Pool
 
 def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2=None):
+    seed()
     if parent1 == None and parent2 == None:
         path = os.path.join("gens", str(gen_num), str(ind_num))
         tmp = []
         for k in range(genomes):
             f = []
             for j in range(4):
-                num = random()
-                sign = randint(0,1)
-                if sign == 1:
-                    num = num * -1
-
+                num = uniform(-1, 1)
                 f.append(num)
             tmp.append(f)
         with open(path, 'w') as ujson_file:
@@ -26,7 +23,7 @@ def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2
 
     elif parent1 != None and parent2 == None:
         path = os.path.join("gens", str(gen_num), str(ind_num))
-        tmp = parent1[:]
+        tmp = parent1
         with open(path, 'w') as ujson_file:
             ujson.dump(tmp, ujson_file)
 
@@ -44,18 +41,14 @@ def create_individual(gen_num, ind_num, genomes, mutation, parent1=None, parent2
 
         for k in range(len(tmp)):
             for j in range(4):
-                num = random()
-                sign = randint(0,1)
-                if sign == 1:
-                    num = num * -1
-
-                if random() < .05:
+                num = uniform(-1, 1)
+                if random() < mutation:
                     tmp[k][j] = num
 
         with open(path, 'w') as ujson_file:
             ujson.dump(tmp, ujson_file)
 
-def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, predecessor=None):
+def create_generation(gen_num, size, workers=2, genomes=60, mutation=0.05, predecessor=None):
     if predecessor == None:
         try:
             os.mkdir("gens")
@@ -116,8 +109,8 @@ def create_generation(gen_num, size, workers=2, genomes=120, mutation=0.05, pred
 
         for i in range(int(to_generate_num/2)):
             i = i * 2
-            parent1 = next_gen[choice(parent_keys)]['actions']
-            parent2 = next_gen[choice(parent_keys)]['actions']
+            parent1 = next_gen[parent_keys.pop(0)]['actions']
+            parent2 = next_gen[parent_keys.pop(0)]['actions']
             args_list.append((gen_num, to_generate.pop(0), genomes, mutation, parent1, parent2))
 
         for i in to_generate:

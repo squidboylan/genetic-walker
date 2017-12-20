@@ -13,11 +13,23 @@ def test_creature(file_name):
     with open(file_name, 'r') as file_stream:
         actions = ujson.load(file_stream)
 
+    i = 0
     for t in range(2000):
-        action = actions[t % len(actions)]
-        observation, reward, done, info = env.step(action)
+        if i % 4 == 0:
+            action = actions[t % len(actions)]
+            observation, reward, done, info = env.step(action)
 
-        final_reward = final_reward + float(reward)
+        else:
+            observation, reward, done, info = env.step(action)
+
+        if float(reward) == -100:
+            final_reward = final_reward + (-100 * (2000-t))
+            break
+
+        else:
+            final_reward = final_reward + float(reward)
+
+        i = i + 1
 
     final_ujson = {"reward": final_reward}
 
